@@ -1,0 +1,425 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Attendance</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f2f4f7;
+            margin: 0;
+            padding: 30px;
+    
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px #00000015;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+        width: 180px;
+        height: 100px;
+        object-fit: contain;
+        margin: 0 auto 10px;
+        display: block;
+        }
+
+        h2 {
+            color: #174c43;
+        }
+
+        .company-address {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #087e70;
+        }
+
+        .location-box {
+            background: #f0f8f6;
+            border: 1px solid #b7d9d1;
+            padding: 13px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .confirm {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .confirm input {
+            width: auto;
+            margin-top: 3px;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            margin: 4px;
+        }
+
+        button:hover {
+            opacity: 0.88;
+        }
+
+        .submit-btn {
+            background: hsl(36, 81%, 49%);
+        }
+
+        .logout-btn {
+            background: hsl(36, 81%, 49%);
+        }
+
+        .delete-btn {
+            background: #c0392b;
+        }
+
+        .download-btn {
+            background: #0c9c3c;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            background: hsl(36, 81%, 49%);
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 12px;
+        }
+
+        .required {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <!-- Keep your company logo in the same folder as this HTML file -->
+        
+        <img src="./aroha_logo.png"
+        alt="Aroha Company Logo"
+        class="logo">
+
+        <h2>Employee Attendance Form</h2>  
+
+        <!-- <div class="company-address">
+            <strong>Company Location</strong><br>
+            #14, 5th Main, 38th Cross, 5th Block,<br>
+            Jayanagar, Bangalore - 560041
+        </div> -->
+    </div>
+
+    <form id="attendanceForm">
+
+        <div class="form-group">
+            <label>Employee ID <span class="required">*</span></label>
+            <input type="text" id="empId"
+                   placeholder="Enter Employee ID" required>
+        </div>
+
+        <div class="form-group">
+            <label>Employee Name <span class="required">*</span></label>
+            <input type="text" id="empName"
+                   placeholder="Enter Employee Name" required>
+        </div>
+
+        <div class="form-group">
+            <label>Attendance Date <span class="required">*</span></label>
+            <input type="date" id="attendanceDate" required>
+        </div>
+
+        <div class="location-box">
+            <strong>Attendance Location:</strong><br>
+            #14, 5th Main, 38th Cross, 5th Block,
+            Jayanagar, Bangalore - 560041
+        </div>
+
+        <label class="confirm">
+            <input type="checkbox" id="locationConfirm" required>
+            <span>I confirm that I am physically present at the company location.</span>
+        </label>
+
+        <div class="form-group">
+            <label>Login Time <span class="required">*</span></label>
+            <input type="time" id="loginTime" required>
+        </div>
+
+        <button type="submit" class="submit-btn">
+            Submit Login Attendance
+        </button>
+
+    </form>
+
+    <p class="note">
+        Logout time is not required in the morning.
+        Use the Record Logout button in your attendance entry when leaving.
+    </p>
+
+    <h2>Attendance Records</h2>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Login</th>
+                    <th>Logout</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="attendanceTable"></tbody>
+        </table>
+    </div>
+
+    <!-- <button class="download-btn" onclick="downloadCSV()">
+        Download CSV
+    </button> -->
+
+</div>
+
+<script>
+const companyLocation =
+    "#14, 5th Main, 38th Cross, 5th Block, Jayanagar, Bangalore - 560041";
+
+const form = document.getElementById("attendanceForm");
+const table = document.getElementById("attendanceTable");
+
+// Get today's date using the employee's local date
+function getToday() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+// Set today's date
+document.getElementById("attendanceDate").value = getToday();
+
+// Set current login time
+function setCurrentLoginTime() {
+    const now = new Date();
+
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    document.getElementById("loginTime").value =
+        `${hours}:${minutes}`;
+}
+
+setCurrentLoginTime();
+
+// Display the employee's own attendance
+function displayRecord(record) {
+    table.innerHTML = "";
+
+    const row = table.insertRow();
+
+    [
+        record.empId,
+        record.empName,
+        record.date,
+        companyLocation,
+        record.login,
+        record.logout || "Not recorded"
+    ].forEach(value => {
+        row.insertCell().textContent = value;
+    });
+
+    const actionCell = row.insertCell();
+
+    if (!record.logout) {
+        const logoutButton = document.createElement("button");
+
+        logoutButton.textContent = "Record Logout";
+        logoutButton.className = "logout-btn";
+
+        logoutButton.onclick = () => recordLogout(record);
+
+        actionCell.appendChild(logoutButton);
+    } else {
+        actionCell.textContent = "Completed";
+    }
+}
+
+// Submit login attendance to FastAPI
+form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    if (!form.reportValidity()) {
+        return;
+    }
+
+    const record = {
+        empId: document.getElementById("empId").value.trim(),
+        empName: document.getElementById("empName").value.trim(),
+        date: document.getElementById("attendanceDate").value,
+        login: document.getElementById("loginTime").value
+    };
+
+    if (!document.getElementById("locationConfirm").checked) {
+        alert("Please confirm that you are at the company location.");
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(record)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.detail || "Unable to submit attendance.");
+        }
+
+        record.logout = "";
+
+        // Remember this browser's submitted record for logout
+        sessionStorage.setItem(
+            "myAttendance",
+            JSON.stringify(record)
+        );
+
+        displayRecord(record);
+
+        alert(result.message);
+
+        form.reset();
+
+        document.getElementById("attendanceDate").value = getToday();
+        setCurrentLoginTime();
+
+    } catch (error) {
+        alert(error.message);
+    }
+});
+
+// Submit logout attendance to FastAPI
+async function recordLogout(record) {
+
+    if (!confirm("Are you sure you want to record your logout?")) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                empId: record.empId,
+                date: record.date
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.detail || "Unable to record logout.");
+        }
+
+        record.logout = "Recorded";
+
+        sessionStorage.setItem(
+            "myAttendance",
+            JSON.stringify(record)
+        );
+
+        displayRecord(record);
+
+        alert(result.message);
+
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+// Restore the current browser's submitted record after refresh
+const savedRecord = sessionStorage.getItem("myAttendance");
+
+if (savedRecord) {
+    displayRecord(JSON.parse(savedRecord));
+}
+</script>
+
+</body>
+</html>
